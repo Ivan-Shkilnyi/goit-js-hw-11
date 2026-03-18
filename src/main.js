@@ -5,6 +5,16 @@ import { getImagesByQuery } from "./js/pixabay-api";
 import { renderGallery, clearGallery } from "./js/render-functions";
 
 const form = document.querySelector(".form");
+const loader = document.querySelector(".loader"); // спінер
+
+// Функції для показу/приховання loader
+function showLoader() {
+    loader.style.display = "block";
+}
+
+function hideLoader() {
+    loader.style.display = "none";
+}
 
 form.addEventListener("submit", async event => {
     event.preventDefault();
@@ -12,7 +22,7 @@ form.addEventListener("submit", async event => {
     const input = event.currentTarget.elements["search-text"];
     const query = input.value.trim();
 
-    // ❗ перевірка
+    // Перевірка на пустий рядок
     if (query === "") {
         iziToast.warning({
             message: "Введіть текст для пошуку!",
@@ -22,14 +32,14 @@ form.addEventListener("submit", async event => {
     }
 
     clearGallery();
+    showLoader(); // показуємо спінер під час запиту
 
     try {
         const images = await getImagesByQuery(query);
 
         if (images.length === 0) {
             iziToast.error({
-                message:
-                    "Sorry, there are no images matching your search query. Please try again!",
+                message: "Sorry, there are no images matching your search query. Please try again!",
                 position: "topRight",
             });
             return;
@@ -42,5 +52,8 @@ form.addEventListener("submit", async event => {
             message: "Сталася помилка при запиті!",
             position: "topRight",
         });
+        console.error(error);
+    } finally {
+        hideLoader(); // ховаємо спінер після завершення запиту
     }
 });
