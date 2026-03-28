@@ -53,6 +53,17 @@ async function fetchImages(isNewSearch = false) {
         } else {
             loadMoreBtn.style.display = "block";
         }
+        if (!isNewSearch) {
+            const galleryItem = document.querySelector(".gallery li");
+            if (galleryItem) {
+                const { height } = galleryItem.getBoundingClientRect();
+
+                window.scrollBy({
+                    top: height * 2,
+                    behavior: "smooth",
+                });
+            }
+        }
     } catch (error) {
         console.error(error);
         iziToast.error({
